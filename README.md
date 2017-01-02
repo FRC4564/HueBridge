@@ -1,12 +1,12 @@
 # HueBridge
-An easy to use, micropython-compatible class to access and control lights on a Philips Hue Bridge.
+An easy-to-use, micropython-compatible class to access and control lights on a Philips Hue Bridge.
 
 ## Features
 * Discovers bridge using the UPnP SSDP protocol
 * Handles developer API username registration for API access
 * Stores bridge IP and username for instant access on restarts
 * Simple methods to get lists of lights and groups
-* Set one or many light or group state parameters with a single call
+* Set one or many, light or group state parameters with a single call
 * Works equally well in micropython or python 2.7 and up
 * Easy to extend with new methods to access more bridge functions
 
@@ -37,7 +37,7 @@ To get details about a specific light our group, use the `getLight` and `getGrou
 h.getLight(1)
 {u'name': u'Dining 1', u'swversion': u'5.38.2.19136', u'manufacturername': u'Philips', u'state': {u'on': True, u'reachable': True, u'bri': 200, u'alert': u'none'}, u'uniqueid': u'00:17:88:01:10:40:2c:14-0b', u'type': u'Dimmable light', u'modelid': u'LWB006'}
 ```
-Here's an example of how you access individual settings from the response:
+Here's an example of how to access individual settings from the response:
 ```
 light = h.getLight(1)
 light['state']['on']
@@ -45,7 +45,7 @@ True
 light['state']['bri']
 200
 ```
-To set light or group states use the `setLight` and `setGroup` methods.
+To set light or group state parameters use the `setLight` and `setGroup` methods.
 ```
 h.setLight(1,bri=254,transitiontime=20)
 h.setGroup(10,on=False)
@@ -58,7 +58,7 @@ Just download the `hue.py` file from this repository and place in a folder with 
 ## More In-Depth Info
 If you'd like to know more about the Hue Bridge API, head over to [https://developers.meethue.com/philips-hue-api].  You'll need to register as a developer to gain access, which is free.
 
-You can use the `get()` and `put()` methods to access other aspects of the bridge API. For example, to get bridge configuration along with the current whitelist of usernames, try the folowing:.
+To access other aspects of the bridge API, you can use the `get()` and `put()` methods. For example, to get bridge configuration along with the current whitelist of usernames, try the folowing:.
 ```
 h.get('config')
 ```
@@ -79,4 +79,8 @@ If you are having trouble with the saved settings and would just like to start f
 h = hue.Bridge(autosetup=False)
 h.reset()   #Clear saved settings
 ```
-You need to throttle how quickly you set light or group parameters.  Philips suggest that lights be updated no quicker than 10 times per second, and groups be updated at most, once per second.  These are just guidelines, to follow.  It is also best practice to minimize how many state values you change in each call.  For instance, once the light is 'on', you can adjust brightness in successful calls, without setting 'on' again.
+If you are having troubles, enable *debug* level 2 to get feedback from the methods.
+```
+h = hue.Bridge(debug=2)    #Enable debug output
+```
+Be aware that issuing *set* commands too quickly can lead to the bridge refusing to accept the request parameters.  Philips suggest that lights be updated no quicker than 10 times per second and groups be updated, at most, once per second.  These are just guidelines to follow.  It is also best practice to minimize how many state values you change in each call.  For instance, once the light is 'on', you can adjust brightness, in successive calls, without setting 'on' again.
