@@ -1,14 +1,14 @@
-# HueBridge
-An easy-to-use, micropython-compatible class to access and control lights on a Philips Hue Bridge.
+# Hue Bridge Client
+An easy-to-use, MicroPython-compatible class to access and control lights on a Philips Hue Bridge.
 
 ## Features
-* Discovers bridge using the UPnP SSDP protocol
+* Automatic bridge discovery using the UPnP SSDP protocol
 * Handles developer API username registration for API access
 * Stores bridge IP and username for instant access on restarts
 * Simple methods to get lists of lights and groups
 * Set one or many, light or group state parameters with a single call
 * Works equally well in micropython or python 2.7 and up
-* Easy to extend with new methods to access more bridge functions
+* Easy to extend with new methods to access more bridge functionality
 
 ## Usage
 The first time the `Bridge` class is used, it will discovery the bridge and then initiate the necessary API username registration. 
@@ -27,7 +27,7 @@ import network
 ap=network.WLAN(network.AP_IF)
 ap.active(False)
 ```
-Once you've connected to the bridge, you can interact with *lights* and *groups*.  Individual lights or groups are referenced by an ID number.  You can get the list of IDs with the methods `getLights` and `getGroups'.
+Once you've connected to the bridge, you can interact with *lights* and *groups*.  Individual lights or groups are referenced by an ID number.  You can get the list of IDs with the methods `getLights` and `getGroups`.
 ```
 h.getGroups()
 {1: 'Dining room', 2: 'Bedroom', ... , 9: 'Porch', 10: 'Spare bedroom'}
@@ -58,14 +58,14 @@ Just download the `hue.py` file from this repository and place in a folder with 
 ## More In-Depth Info
 If you'd like to know more about the Hue Bridge API, head over to [https://developers.meethue.com/philips-hue-api].  You'll need to register as a developer to gain access, which is free.
 
-To access other aspects of the bridge API, you can use the `get()` and `put()` methods. For example, to get bridge configuration along with the current whitelist of usernames, try the folowing:.
+To access other aspects of the bridge API, use the `get()` and `put()` methods. For example, to get bridge configuration along with the current whitelist of usernames, try the folowing:
 ```
 h.get('config')
 ```
-The methods `post()` and `delete()` are not currently implemented, but can be easily added, by modelling them after the get and put methods.
+The methods `post()` and `delete()` are not currently implemented, but can be easily added, by modelling them after the get and put methods.  These methods are used to change bridge and device configurations.
 
-When you first use this class, it runs `setup()`, which locates the bridge's IP address and then follows-up with getting a developer username from the bridge.  Both of these values will be stored to the file `bridge.dat` within the current working directory.  The next time you use the Bridge class, it will load the saved IP and username values.
-If the bridge changes IP, you can edit the `bridge.dat` file.  It is recommended that you make reserve the bridges IP address on your router, so it doesn't hop around. Alternatively, you can force a `discover()` whenever you connect to the bridge.  To do this you'll need to disable autosetup when instantiating the Bridge class. Here's the steps necessary:
+When first instantiating this class, `setup()` runs, which locates the bridge's IP address and attempts to get an API username from the bridge.  Both of these values will be stored to the file `bridge.dat` within the current working directory.  The next time the Bridge class instantiated, it will load the saved IP and username values automatically.
+If the bridge changes IP, you can edit the `bridge.dat` file.  It is recommended that you reserve the bridges IP address on your router, so it doesn't hop around. Alternatively, you can force a `discover()` whenever you connect to the bridge to get its current IP.  To do this you'll need to disable autosetup when instantiating the Bridge class. Here's the steps necessary:
 ```
 h = hue.Bridge(autosetup=False)
 h.loadSettings()   #This will load the last known IP and API Username
@@ -79,8 +79,8 @@ If you are having trouble with the saved settings and would just like to start f
 h = hue.Bridge(autosetup=False)
 h.reset()   #Clear saved settings
 ```
-If you are having troubles, enable *debug* level 2 to get feedback from the methods.
+If you are having get the bridge to respond to commands, enable *debug* level 2 to get feedback from the method calls.
 ```
 h = hue.Bridge(debug=2)    #Enable debug output
 ```
-Be aware that issuing *set* commands too quickly can lead to the bridge refusing to accept the request parameters.  Philips suggest that lights be updated no quicker than 10 times per second and groups be updated, at most, once per second.  These are just guidelines to follow.  It is also best practice to minimize how many state values you change in each call.  For instance, once the light is 'on', you can adjust brightness, in successive calls, without setting 'on' again.
+Be aware that issuing *set* commands too quickly can lead to the bridge refusing to process the request.  Philips suggest that lights be updated no quicker than 10 times per second and groups be updated, at most, once per second.  These are just guidelines to follow.  It is also best practice to minimize how many state values you change in each call.  For instance, once the light is 'on', you can adjust brightness, in successive calls, without setting 'on' again.
